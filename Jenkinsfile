@@ -16,31 +16,29 @@ def slackFailure(){
 node {
     def project = "badgeserver"
     def goPath = "/go/src/github.com/eltorocorp/${project}"
-docker.image("golang:1.10").inside("-v ${pwd()}:${goPath} -u root -v /var/run/docker.sock:/var/run/docker.sock") {
-        withAWS(region: 'us-east-1', credentials:'aws'){
-            try {
-            sshagent (credentials: ['private_repo_ssh']) {
-                stage('Pre-Build') {
-                    setBuildStatusBadge(project, 'pending', 'blue')
-                    sh "chmod -R 0777 ${goPath}"
-                    checkout scm
-                }
-
-                stage('Build') {
-                    sh "cd ${goPath} && go build"
-                }
-                
-                stage("Post-Build") {
-                    setBuildStatusBadge(project, 'passing', 'green')
-                    //slackSuccess()
-                    currentBuild.result = 'SUCCESS'
-                }
+docker.image("golang:1.10").inside("-v ${pwd()}:${goPath} -u root") {
+        try {
+        sshagent (credentials: ['private_repo_ssh']) {
+            stage('Pre-Build') {
+                setBuildStatusBadge(project, 'pending', 'blue')
+                sh "chmod -R 0777 ${goPath}"
+                checkout scm
             }
-        } catch (Exception err) {
-            sh "echo ${err}"
-            setBuildStatusBadge(project, 'failing', 'red')
-            //slackFailure()
-            currentBuild.result = 'FAILURE'
-        } 
-    }              
-}
+
+            stage('Build') {
+                sh "cd ${goPath} && go build"
+            }
+            
+            stage("Post-Build") {
+                setBuildStatusBadge(project, 'passing', 'green')
+                //slackSuccess()
+                currentBuild.result = 'SUCCESS'
+            }
+        }
+    } catch (Exception err) {
+        sh "echo ${err}"
+        setBuildStatusBadge(project, 'failing', 'red')
+        //slackFailure()
+        currentBuild.result = 'FAILURE'
+    } 
+}              
