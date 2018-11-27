@@ -41,4 +41,4 @@ docker.image("golang:1.10").inside("-v ${pwd()}:${goPath} -u root") {
         //slackFailure()
         currentBuild.result = 'FAILURE'
     } 
-}              
+}
