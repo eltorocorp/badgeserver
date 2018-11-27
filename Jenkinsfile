@@ -26,19 +26,19 @@ docker.image("golang:1.10").inside("-v ${pwd()}:${goPath} -u root") {
                 }
 
                 stage('Build') {
-                    sh "cd ${goPath} && go build"
+                    sh "cd ${goPath} && go build -o badgeserverBuild"
                 }
                 
                 stage("Post-Build") {
                     setBuildStatusBadge(project, 'passing', 'green')
-                    //slackSuccess()
+                    slackSuccess()
                     currentBuild.result = 'SUCCESS'
                 }
             }
         } catch (Exception err) {
             sh "echo ${err}"
             setBuildStatusBadge(project, 'failing', 'red')
-            //slackFailure()
+            slackFailure()
             currentBuild.result = 'FAILURE'
         }
     }
