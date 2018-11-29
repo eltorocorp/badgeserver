@@ -1,5 +1,6 @@
 # BadgesServer
 BadgeServer is a tiny server that allows private repositories to use shields.io for status badges.
+![Build Status](http://badges.awsp.eltoro.com?project=badgeserver&item=build)
 
 ## How it works
 A BadgeServer instance sits as an intermediary between a repository (i.e. github), a CI Server (i.e. Jenkins), and [shields.io](shelds.io), allowing them to communicate badge information without knowing about one another.
